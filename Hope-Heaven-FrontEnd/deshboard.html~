@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hope Heaven</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <style>
+    body {
+      background-color: #eaf4e2;
+    }
+    .navbar {
+      background-color: #2d6a4f;
+    }
+    .navbar-brand, .nav-link {
+      color: #fff !important;
+    }
+    .container-section {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+    .card {
+      background-color: #d8f3dc;
+      border: none;
+      border-radius: 10px;
+    }
+    .left-section, .right-section {
+      width: 48%;
+    }
+  </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" href="#">Hope Heaven</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Login</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Register</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Make a Donation</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Make a Request</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container container-section">
+  <div class="left-section">
+    <h3>Hellow Donor</h3>
+    <div class="card p-3 mb-3">
+      <p><strong>Donor Name:</strong>Samith Wijesekara</p>
+      <p><strong>Donation:</strong>B- Blood Group</p>
+      <p><strong>Address:</strong>35/1 Colombo</p>
+      <p><strong>Contact:</strong>0765546765</p>
+    </div>
+    <div class="card p-3 mb-3">
+      <p><strong>Donor Name:</strong>pasidu abenayaka</p>
+      <p><strong>Donation:</strong>A+ Blood Group</p>
+      <p><strong>Address:</strong>80/1 Matara Road</p>
+      <p><strong>Contact:</strong>0763457612</p>
+    </div>
+
+  </div>
+  <div class="right-section">
+    <h3>Hellow Patient</h3>
+    <div class="card p-3 mb-3">
+      <p><strong>Patient Name:</strong> Alice Johnson</p>
+      <p><strong>Request:</strong>+B Blood Group</p>
+      <p><strong>Address:</strong>No 35/1 Colombo</p>
+      <p><strong>Contact:</strong>0763459812</p>
+    </div>
+    <div class="card p-3 mb-3">
+      <p><strong>Patient Name:</strong> Mark Lee</p>
+      <p><strong>Request:</strong> Kidney </p>
+      <p><strong>Address:</strong>No 35/1 Ambalangoda</p>
+      <p><strong>Contact:</strong>0763339812</p>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

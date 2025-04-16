@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Users</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .sidebar {
+      height: 100vh;
+      width: 250px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background-color: #428000;
+      color: white;
+      padding-top: 20px;
+    }
+    .sidebar a {
+      display: block;
+      color: white;
+      padding: 10px 15px;
+      text-decoration: none;
+    }
+    .sidebar a:hover {
+      background-color: #5a9f50;
+    }
+    .main-content {
+      margin-left: 240px;
+      padding: 20px;
+    }
+    .header {
+      background-color: rgba(92, 128, 0, 0.64);
+      border-bottom: 1px solid #ddd;
+      padding: 5px;
+      border-radius: 15px;
+    }
+    .content {
+      margin-top: 20px;
+    }
+    .password-toggle {
+      cursor: pointer;
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .password-input-container {
+      position: relative;
+    }
+  </style>
+</head>
+<body>
+<!-- Sidebar -->
+<div class="sidebar">
+  <h3 class="text-center"><a href="dashboardPage.html">Admin Dashboard</a></h3>
+  <a href="manageRequest.html">Manage Request</a>
+  <a href="manageUser.html">Manage Users</a>
+  <a href="login.html">Logout</a>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+  <!-- Header -->
+  <div class="header">
+    <h2>Welcome, Admin</h2>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+    <section id="users" class="mt-5">
+      <div class="d-flex justify-content-between mb-3">
+        <h3>Manage Users</h3>
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addAdminModal">
+          <i class="fas fa-plus"></i> Add New Admin
+        </button>
+      </div>
+      <table class="table table-bordered">
+        <thead>
+        <tr>
+          <th>User ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Address</th>
+          <th>Contact</th>
+          <th>NIC</th>
+          <th>Role</th>
+          <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody id="userTableBody">
+        <!-- Dynamic rows will be inserted here -->
+        </tbody>
+      </table>
+    </section>
+  </div>
+</div>
+
+<!-- Add Admin Modal -->
+<div class="modal fade" id="addAdminModal" tabindex="-1" aria-labelledby="addAdminModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addAdminModalLabel">Add New Admin</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="addAdminForm">
+          <div class="mb-3">
+            <label for="userId" class="form-label">User ID</label>
+            <input type="text" class="form-control" id="userId" readonly>
+          </div>
+          <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" required>
+            <div class="invalid-feedback">Please provide a valid name (letters and spaces only).</div>
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" required>
+            <div class="invalid-feedback">Please provide a valid email address.</div>
+          </div>
+          <div class="mb-3">
+            <label for="address" class="form-label">Address</label>
+            <input type="text" class="form-control" id="address" required>
+            <div class="invalid-feedback">Please provide a valid address.</div>
+          </div>
+          <div class="mb-3">
+            <label for="contact" class="form-label">Contact</label>
+            <input type="tel" class="form-control" id="contact" required>
+            <div class="invalid-feedback">Please provide a valid contact number (10 digits with 0 or +94).</div>
+          </div>
+          <div class="mb-3">
+            <label for="nic" class="form-label">NIC</label>
+            <input type="text" class="form-control" id="nic" required>
+            <div class="invalid-feedback">Please provide a valid NIC (9 digits with V or 12 digits).</div>
+          </div>
+          <div class="mb-3">
+            <label for="role" class="form-label">Role</label>
+            <select class="form-select" id="role" required>
+              <option value="ADMIN" selected>ADMIN</option>
+              <option value="USER">USER</option>
+            </select>
+          </div>
+          <div class="mb-3 password-input-container">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" required>
+            <i class="fas fa-eye password-toggle" onclick="togglePasswordVisibility('password')"></i>
+            <div class="invalid-feedback">Password must be at least 8 characters with at least one letter and one number.</div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="addAdmin()">Save Admin</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const baseUrl = "http://localhost:8082/api/v1/user";
+
+  // Generate a new user ID
+  function generateUserId() {
+    const prefix = "UID-";
+    const randomNum = Math.floor(1000 + Math.random() * 9000);
+    return prefix + randomNum;
+  }
+
+  // Toggle password visibility
+  function togglePasswordVisibility(fieldId) {
+    const passwordField = document.getElementById(fieldId);
+    const toggleIcon = passwordField.nextElementSibling;
+
+    if (passwordField.type === "password") {
+      passwordField.type = "text";
+      toggleIcon.classList.remove("fa-eye");
+      toggleIcon.classList.add("fa-eye-slash");
+    } else {
+      passwordField.type = "password";
+      toggleIcon.classList.remove("fa-eye-slash");
+      toggleIcon.classList.add("fa-eye");
+    }
+  }
+
+  // Fetch all users
+  async function fetchUsers() {
+    try {
+      const response = await fetch(baseUrl + '/getAllUsers');
+      if (response.ok) {
+        const responseData = await response.json();
+        if (responseData.code === "00" && responseData.content) {
+          populateTable(responseData.content);
+        } else {
+          console.error('Failed to fetch users:', responseData.message);
+          alert('Error: ' + responseData.message);
+        }
+      } else {
+        const error = await response.json();
+        console.error('Failed to fetch users:', error.message);
+        alert('Error: ' + error.message);
+      }
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      alert('An error occurred while fetching users.');
+    }
+  }
+
+  // Populate the table with user data
+  function populateTable(users) {
+    const userTableBody = document.getElementById('userTableBody');
+    userTableBody.innerHTML = '';
+
+    users.forEach(user => {
+      const row = document.createElement('tr');
+
+      // Determine text color for role
+      let roleColor = user.role === 'ADMIN' ? '#dc3545' : '#28a745';
+
+      row.innerHTML = `
+        <td>${user.id}</td>
+        <td>${user.name}</td>
+        <td>${user.email}</td>
+        <td>${user.address}</td>
+        <td>${user.contact}</td>
+        <td>${user.nic}</td>
+        <td><span style="color: ${roleColor}; font-weight: bold;">${user.role}</span></td>
+        <td>
+          <button class="btn btn-sm btn-danger" onclick="deleteUser('${user.id}')">
+            <i class="fas fa-trash"></i> Remove
+          </button>
+        </td>
+      `;
+      userTableBody.appendChild(row);
+    });
+  }
+
+  // Add a new admin/user
+  async function addAdmin() {
+    const form = document.getElementById('addAdminForm');
+    const userData = {
+      id: document.getElementById('userId').value,
+      name: document.getElementById('name').value,
+      email: document.getElementById('email').value,
+      address: document.getElementById('address').value,
+      contact: document.getElementById('contact').value,
+      nic: document.getElementById('nic').value,
+      role: document.getElementById('role').value,
+      password: document.getElementById('password').value
+    };
+
+    // Validate form (simple validation - you might want to add more)
+    if (!userData.name || !userData.email || !userData.password) {
+      alert('Please fill all required fields');
+      return;
+    }
+
+    try {
+      const response = await fetch(baseUrl + '/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(userData)
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.code === "00") {
+          alert('User added successfully!');
+          // Close the modal and refresh the table
+          const modal = bootstrap.Modal.getInstance(document.getElementById('addAdminModal'));
+          modal.hide();
+          fetchUsers();
+        } else {
+          alert('Error: ' + result.message);
+        }
+      } else {
+        const error = await response.json();
+        alert('Error: ' + error.message);
+      }
+    } catch (error) {
+      console.error('Error adding user:', error);
+      alert('An error occurred while adding the user.');
+    }
+  }
+
+  // Delete a user
+  async function deleteUser(userId) {
+    if (!confirm('Are you sure you want to delete this user?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(baseUrl + '/delete/' + userId, {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.code === "00") {
+          alert('User deleted successfully!');
+          fetchUsers();
+        } else {
+          alert('Error: ' + result.message);
+        }
+      } else {
+        const error = await response.json();
+        alert('Error: ' + error.message);
+      }
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      alert('An error occurred while deleting the user.');
+    }
+  }
+
+  // Initialize the modal with generated ID
+  document.getElementById('addAdminModal').addEventListener('show.bs.modal', function () {
+    document.getElementById('userId').value = generateUserId();
+    document.getElementById('role').value = 'ADMIN';
+    // Reset form
+    document.getElementById('addAdminForm').reset();
+  });
+
+  // Fetch users when the page loads
+  window.onload = fetchUsers;
+</script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+package lk.ijse.hopeheavenbackend.controller;
+
+import jakarta.validation.Valid;
+import lk.ijse.hopeheavenbackend.dto.RequestDTO;
+import lk.ijse.hopeheavenbackend.dto.ResponseDTO;
+import lk.ijse.hopeheavenbackend.dto.UserDTO;
+import lk.ijse.hopeheavenbackend.service.RequestService;
+import lk.ijse.hopeheavenbackend.utill.VarList;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("api/v1/request")
+@CrossOrigin(origins = "*")
+public class RequestController {
+    @Autowired
+    private RequestService requestService;
+
+    @PostMapping(value = "saveRequest")
+    public ResponseEntity<ResponseDTO> saveRequest(@Valid @RequestBody RequestDTO requestDTO) {
+        int response = requestService.addRequest(requestDTO);
+
+        if(response == VarList.Created) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO(VarList.Created, "User Registered Successfully", null));
+        } else if (response==VarList.Not_Acceptable){
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new ResponseDTO(VarList.Not_Acceptable, "User Already Registered", null));
+        }else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDTO(VarList.Internal_Server_Error, "Something went wrong", null));
+        }
+    }
+
+
+    @GetMapping(value = "getNextRequestId")
+    public ResponseEntity<ResponseDTO> getNextRequestId() {
+        String nextRequestId = requestService.generateNextRequestId();
+        if (nextRequestId != null){
+            return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO(VarList.Created,"New RequestId Successfully Generated",nextRequestId));
+        }else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDTO(VarList.Internal_Server_Error, "Something went wrong", null));
+        }
+    }
+
+    @GetMapping(value = "getAllRequest")
+    public ResponseEntity<ResponseDTO> getAllRequests(){
+        if (requestService.getAllRequests() != null) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO(VarList.Created, "All Request Successfully Fetched", requestService.getAllRequests()));
+        }else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDTO(VarList.Internal_Server_Error, "Something went wrong", null));
+        }
+    }
+
+    @PutMapping(value = "updateRequest")
+    public ResponseEntity<ResponseDTO> updateUsers(@Valid @RequestBody RequestDTO requestDTO){
+        int response = requestService.updateRequests(requestDTO);
+        if(response== VarList.OK){
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO(VarList.OK, "User Successfully Updated",null));
+        } else if (response==VarList.Not_Found){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(VarList.Not_Found, "User Not Found",null));
+        }else {
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(new ResponseDTO(VarList.Bad_Gateway, "Something went wrong",null));
+        }
+    }
+
+    @DeleteMapping
+    public ResponseEntity<ResponseDTO> deleteRequest(@Valid @RequestBody RequestDTO requestDTO){
+        int response = requestService.deleteRequests(requestDTO.getRequestId());
+        if(response==VarList.OK){
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO(VarList.OK,"User Delete Successfully",null));
+        } else if (response==VarList.Not_Found) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO(VarList.Not_Found, "User Not Found",null));
+        }else {
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(new ResponseDTO(VarList.Bad_Gateway, "Something went wrong",null));
+        }
+    }
+
+
+}

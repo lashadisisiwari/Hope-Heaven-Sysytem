@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Login</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f7fb;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background: rgba(36, 99, 74, 0.73);
+      width: 100%;
+      max-width: 350px;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #333;
+    }
+    .input-group {
+      margin-bottom: 20px;
+      margin-right: 20px;
+    }
+    .input-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 14px;
+      color: #333;
+    }
+    .input-group input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      font-size: 14px;
+      color: #555;
+    }
+    .input-group input:focus {
+      border-color: rgba(237, 237, 233, 0.7);
+      outline: none;
+    }
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background-color: rgba(24, 69, 50, 0.82);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background-color: rgba(237, 237, 233, 0.7);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #fdfafa;
+    }
+    .password-toggle {
+      position: absolute;
+      right: 1px;
+      top: 30px;
+      cursor: pointer;
+      color: rgba(237, 237, 233, 0.7);
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2>User Login</h2>
+  <form id="loginForm">
+    <div class="input-group">
+      <label for="name">Name</label>
+      <input type="name" id="name" name="name" required>
+    </div>
+
+    <div class="input-group" style="position: relative;">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required>
+      <span id="togglePassword" class="password-toggle">Show</span>
+    </div>
+
+    <button type="submit" class="btn">Login</button>
+  </form>
+
+  <div class="footer">
+    <p>Don't have an account? <a href="register.html">Register here</a></p>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  // Constants matching your VarList values
+  const ResponseStatus = {
+    OK: 200,
+    NOT_FOUND: 404,
+    INTERNAL_SERVER_ERROR: 500
+  };
+
+  // User class matching your UserDTO
+  class User {
+    constructor(id, password) {
+      this.name = name;
+      this.password = password;
+    }
+
+    // Validation methods matching your DTO annotations
+    validate() {
+      const errors = [];
+
+
+
+      // Name validation
+      if (!/^[A-Za-z ]+$/.test(this.name) || this.name.length < 2 || this.name.length > 50) {
+        errors.push("Name must be 2-50 alphabetic characters");
+      }
+
+
+      // Password validation
+      if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(this.password)) {
+        errors.push("Password must be at least 8 characters with at least one letter and one number");
+      }
+
+      return errors.length === 0 ? null : errors;
+    }
+  }
+
+  // API Service for user operations
+  class UserService {
+    static async login(user) {
+      try {
+        const validationErrors = user.validate();
+        if (validationErrors) {
+          return {
+            status: 400, // Bad Request
+            message: "Validation failed",
+            errors: validationErrors
+          };
+        }
+
+        const response = await fetch('http://your-api-base-url/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(user)
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          return {
+            status: response.status,
+            message: errorData.message || "Login failed",
+            data: null
+          };
+        }
+
+        const data = await response.json();
+        return {
+          status: ResponseStatus.OK,
+          message: "Login successful",
+          data: data
+        };
+
+      } catch (error) {
+        console.error("Login error:", error);
+        return {
+          status: ResponseStatus.INTERNAL_SERVER_ERROR,
+          message: "An unexpected error occurred",
+          data: null
+        };
+      }
+    }
+  }
+
+  // Example usage
+  document.addEventListener('DOMContentLoaded', () => {
+    const loginForm = document.getElementById('loginForm');
+
+    if (loginForm) {
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Get form values
+        const user = new User(
+          document.getElementById('name').value,
+          document.getElementById('password').value
+        );
+
+        // Perform login
+        const loginResult = await UserService.login(user);
+
+        // Handle result
+        const resultDiv = document.getElementById('loginResult');
+        resultDiv.innerHTML = '';
+
+        if (loginResult.status === ResponseStatus.OK) {
+          resultDiv.innerHTML = `<div class="alert alert-success">${loginResult.message}</div>`;
+          // Redirect or perform other actions on successful login
+          window.location.href = '/dashboard';
+        } else {
+          let errorHtml = `<div class="alert alert-danger">
+                    <h4>${loginResult.message}</h4>`;
+
+          if (loginResult.errors) {
+            errorHtml += '<ul>';
+            loginResult.errors.forEach(error => {
+              errorHtml += `<li>${error}</li>`;
+            });
+            errorHtml += '</ul>';
+          }
+
+          errorHtml += '</div>';
+          resultDiv.innerHTML = errorHtml;
+        }
+      });
+    }
+  });
+</script>
+</body>
+</html>

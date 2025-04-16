@@ -1,0 +1,402 @@
+<!--
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Registration</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f7fb;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background: rgba(66, 128, 0, 0.73);
+      width: 100%;
+      max-width: 350px;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #333;
+    }
+    .input-group {
+      margin-bottom: 20px;
+      margin-right: 20px;
+    }
+    .input-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 14px;
+      color: #333;
+    }
+    .input-group input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      font-size: 14px;
+      color: #555;
+    }
+    .input-group input:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+    .input-group .error {
+      color: red;
+      font-size: 12px;
+      display: none;
+    }
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background-color: rgba(24, 69, 50, 0.82);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background-color: rgba(24, 69, 50, 0.82);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #fdfafa;
+    }
+    .password-toggle {
+      position: absolute;
+      right: 1px;
+      top: 30px;
+      cursor: pointer;
+      color: rgba(237, 237, 233, 0.7);
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2>User Registration</h2>
+  <form id="registrationForm">
+    <div class="input-group">
+      <label for="user_name">User Name</label>
+      <input type="text" id="user_name" name="user_name" required>
+      <div class="error" id="user_name_error">User name is required.</div>
+    </div>
+
+    <div class="input-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required>
+      <div class="error" id="email_error">A valid email is required.</div>
+    </div>
+
+    <div class="input-group" style="position: relative;">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required>
+      <span id="togglePassword" class="password-toggle">Show</span>
+      <div class="error" id="password_error">Password is required.</div>
+    </div>
+
+    <div class="input-group">
+      <label for="contact">Contact</label>
+      <input type="text" id="contact" name="contact" maxlength="10">
+      <div class="error" id="contact_error">Contact number is required.</div>
+    </div>
+
+    <button type="submit" class="btn">Register</button>
+  </form>
+
+  <div class="footer">
+    <p>Already have an account? <a href="login.html">Login here</a></p>
+  </div>
+</div>
+
+</body>
+</html>
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Registration</title>
+  <!-- SweetAlert CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f7fb;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      background: rgba(66, 128, 0, 0.73);
+      width: 100%;
+      max-width: 400px;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      margin: 20px 0;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #333;
+    }
+    .input-group {
+      margin-bottom: 20px;
+    }
+    .input-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 14px;
+      color: #333;
+    }
+    .input-group input, .input-group select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      font-size: 14px;
+      color: #555;
+    }
+    .input-group input:focus, .input-group select:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+    .input-group .error {
+      color: red;
+      font-size: 12px;
+      display: none;
+    }
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background-color: rgba(24, 69, 50, 0.82);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .btn:hover {
+      background-color: rgba(24, 69, 50, 0.9);
+    }
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #fdfafa;
+    }
+    .password-toggle {
+      position: absolute;
+      right: 10px;
+      top: 30px;
+      cursor: pointer;
+      color: rgba(237, 237, 233, 0.7);
+    }
+    .password-container {
+      position: relative;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2>User Registration</h2>
+  <form id="registrationForm">
+    <div class="input-group">
+      <label for="id">User ID</label>
+      <input type="text" id="id" name="id" readonly>
+      <div class="error" id="id_error"></div>
+    </div>
+
+    <div class="input-group">
+      <label for="name">Full Name</label>
+      <input type="text" id="name" name="name" required placeholder="John Doe">
+      <div class="error" id="name_error"></div>
+    </div>
+
+    <div class="input-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required placeholder="example@email.com">
+      <div class="error" id="email_error"></div>
+    </div>
+
+    <div class="input-group">
+      <label for="address">Address</label>
+      <input type="text" id="address" name="address" required placeholder="123 Main St">
+      <div class="error" id="address_error"></div>
+    </div>
+
+    <div class="input-group">
+      <label for="contact">Contact Number</label>
+      <input type="text" id="contact" name="contact" required placeholder="0771234567 or +94771234567">
+      <div class="error" id="contact_error"></div>
+    </div>
+
+    <div class="input-group">
+      <label for="nic">NIC Number</label>
+      <input type="text" id="nic" name="nic" required placeholder="123456789V or 123456789012">
+      <div class="error" id="nic_error"></div>
+    </div>
+
+    <div class="input-group">
+      <label for="role">User Role</label>
+      <select id="role" name="role" required>
+        <option value="">Select Role</option>
+        <option value="USER">User</option>
+        <option value="ADMIN">Admin</option>
+      </select>
+      <div class="error" id="role_error"></div>
+    </div>
+
+    <div class="input-group password-container">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required placeholder="At least 8 chars with 1 number">
+      <span id="togglePassword" class="password-toggle">Show</span>
+      <div class="error" id="password_error"></div>
+    </div>
+
+    <button type="submit" class="btn">Register</button>
+
+  </form>
+
+  <div class="footer">
+    <p>Already have an account? <a href="login.html">Login here</a></p>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+  $(document).ready(function() {
+    // Get next user ID when page loads
+    getNextUserId();
+
+    // Toggle password visibility
+    $('#togglePassword').click(function() {
+      const passwordInput = $('#password');
+      if (passwordInput.attr('type') === 'password') {
+        passwordInput.attr('type', 'text');
+        $(this).text('Hide');
+      } else {
+        passwordInput.attr('type', 'password');
+        $(this).text('Show');
+      }
+    });
+
+    // Form submission
+    $('#registrationForm').submit(function(e) {
+      e.preventDefault();
+      registerUser();
+    });
+
+    // View all users button
+    $('#getAllBtn').click(function() {
+      getAllUsers();
+    });
+  });
+
+  function getNextUserId() {
+    $.ajax({
+      url: 'http://localhost:8082/api/v1/user/getNextUserId',
+      type: 'GET',
+      success: function(response) {
+        if(response.code === 201) {
+          $('#id').val(response.data);
+        } else {
+          Swal.fire('Error', 'Could not generate user ID', 'error');
+        }
+      },
+      error: function() {
+        Swal.fire('Error', 'Could not connect to server', 'error');
+      }
+    });
+  }
+
+  function registerUser() {
+    const formData = {
+      id: $('#id').val(),
+      name: $('#name').val(),
+      email: $('#email').val(),
+      address: $('#address').val(),
+      contact: $('#contact').val(),
+      nic: $('#nic').val(),
+      role:"USER",
+      password: $('#password').val()
+    };
+
+    $.ajax({
+      url: 'http://localhost:8082/api/v1/user/register',
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify(formData),
+      success: function(response) {
+        if(response.code === 201) {
+          Swal.fire('Success', 'User registered successfully!', 'success');
+          $('#registrationForm')[0].reset();
+          getNextUserId();
+        } else if(response.code === 406) {
+          Swal.fire('Warning', 'User already registered', 'warning');
+        } else {
+          Swal.fire('Error', 'Registration failed', 'error');
+        }
+      },
+      error: function() {
+        Swal.fire('Error', 'Registration failed', 'error');
+      }
+    });
+  }
+
+  function getAllUsers() {
+    $.ajax({
+      url: 'http://localhost:8080/api/v1/user/getAllUsers',
+      type: 'GET',
+      success: function(response) {
+        if(response.code === 201 && response.content.length > 0) {
+          let usersHtml = '<div style="text-align: left; max-height: 300px; overflow-y: auto;">';
+          response.content.forEach(user => {
+            usersHtml += `
+              <div style="margin-bottom: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+                <p><strong>ID:</strong> ${user.id}</p>
+                <p><strong>Name:</strong> ${user.name}</p>
+                <p><strong>Email:</strong> ${user.email}</p>
+                <p><strong>Role:</strong> ${user.role}</p>
+              </div>
+            `;
+          });
+          usersHtml += '</div>';
+
+          Swal.fire({
+            title: 'All Registered Users',
+            html: usersHtml,
+            width: '600px'
+          });
+        } else {
+          Swal.fire('Info', 'No users found', 'info');
+        }
+      },
+      error: function() {
+        Swal.fire('Error', 'Could not fetch users', 'error');
+      }
+    });
+  }
+</script>
+</body>
+</html>
